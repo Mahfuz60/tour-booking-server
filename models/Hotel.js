@@ -39,7 +39,7 @@ const HotelSchema = new mongoose.Schema({
   },
 
   rooms: {
-    type: [String],
+    type:Number,
   },
   cheapestPrice: {
     type: Number,
