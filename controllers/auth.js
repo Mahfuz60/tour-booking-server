@@ -1,5 +1,6 @@
 import User from '../models/User.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import { createError } from '../utils/error.js';
 
 //USER REGISTER
@@ -26,10 +27,15 @@ export const login = async (req, res, next) => {
     const user = await User.findOne({ userName: req.body.userName });
     if (!user) return next(createError(404, 'user is not found!'));
     const matchPassword = await bcrypt.compareSync(req.body.password, user.password);
-    if (!matchPassword) return next(createError(400, 'user and password not matched!'));
+    if (!matchPassword) return next(createError(404, 'user and password not matched!'));
+    //JWT
+    const token = jwt.sign({ id: user._id, admin: user.isAdmin }, process.env.JWT_SECRET);
 
     const { password, isAdmin, ...otherDetails } = user._doc;
-    res.status(200).json({ ...otherDetails });
+    res
+      .cookie('access_token', token, { httpOnly: true })
+      .status(200)
+      .json({ ...otherDetails });
   } catch (err) {
     next(err);
   }
