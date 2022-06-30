@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import authRoute from './routes/authRoute.js';
 import usersRoute from './routes/usersRoute.js';
 import hotelsRoute from './routes/hotelsRoute.js';
-import roomRoute from './routes/roomRoute.js';
+import roomsRoute from './routes/roomsRoute.js';
 import cookieParser from 'cookie-parser';
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,7 +31,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRoute);
 app.use('/api/users', usersRoute);
 app.use('/api/hotels', hotelsRoute);
-app.use('/api/room', roomRoute);
+app.use('/api/rooms', roomsRoute);
 
 //error handler
 app.use((err, req, res, next) => {
