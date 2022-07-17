@@ -1,4 +1,5 @@
 import Hotel from '../models/Hotel.js';
+import Room from '../models/room.js';
 
 //CREATE
 export const createHotel = async (req, res, next) => {
@@ -14,7 +15,11 @@ export const createHotel = async (req, res, next) => {
 //UPDATE
 export const updateHotel = async (req, res, next) => {
   try {
-    const updateHotel = await Hotel.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const updateHotel = await Hotel.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
     res.status(200).json(updateHotel);
   } catch (err) {
     next(err);
@@ -46,7 +51,7 @@ export const getHotels = async (req, res, next) => {
   try {
     const hotels = await Hotel.find({
       ...others,
-      cheapestPrice: { $gt: min ||1, $lt: max || 1000 },
+      cheapestPrice: { $gt: min || 1, $lt: max || 1000 },
     }).limit(req.query.limit);
     res.status(200).json(hotels);
   } catch (err) {
@@ -90,6 +95,21 @@ export const countByType = async (req, res, next) => {
       { type: 'Vacation Appartments', count: vacationCount },
       { type: 'Guest House', count: guestCount },
     ]);
+  } catch (err) {
+    next(err);
+  }
+};
+
+//get hotel room
+export const getHotelRooms = async (req, res, next) => {
+  try {
+    const hotel = await Hotel.findById(req.params.id);
+    const list = await Promise.all(
+      hotel.rooms.map((room) => {
+        return Room.findById(room);
+      })
+    );
+    res.status(200).json(list);
   } catch (err) {
     next(err);
   }

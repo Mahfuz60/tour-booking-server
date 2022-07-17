@@ -23,8 +23,28 @@ export const createRoom = async (req, res, next) => {
 //UPDATE
 export const updateRoom = async (req, res, next) => {
   try {
-    const updateRoom = await Room.findByIdAndUpdate(req.params.id, { $set: req.body }, { new: true });
+    const updateRoom = await Room.findByIdAndUpdate(
+      req.params.id,
+      { $set: req.body },
+      { new: true }
+    );
     res.status(200).json(updateRoom);
+  } catch (err) {
+    next(err);
+  }
+};
+//UPDATE ROOM AVAILABILITY
+export const updateRoomAvailability = async (req, res, next) => {
+  try {
+    await Room.updateOne(
+      { 'roomNumber._id': req.params.id },
+      {
+        $push: {
+          'roomNumber.$.unavailableDates': req.body.dates,
+        },
+      }
+    );
+    res.status(200).json('Room hasbeen updated!');
   } catch (err) {
     next(err);
   }
